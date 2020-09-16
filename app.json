@@ -1,0 +1,35 @@
+{
+  "expo": {
+    "name": "KUICK",
+    "slug": "kuick",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#E63D3A"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "bundleIdentifier": "com.alvar.consumidormarkapp",
+      "buildNumber": "1.0.0"
+    },
+    "android": {
+      "package": "com.alvar.consumidormarkapp",
+      "versionCode": 3,
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyBorx9FPfjN0JV4DQeL9BhzBd0vW4wB55I"
+        }
+      },
+      "googleServicesFile": "./google-services.json",
+      "useNextNotificationsApi": true
+    }
+  }
+}
