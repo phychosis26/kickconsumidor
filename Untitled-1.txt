@@ -1,0 +1,5 @@
+ Keystore password: 9c724b41a60a42aba21570070be77142
+  Key alias:         QG1hcmthcHAva3VpY2s=
+  Key password:      4bc96e91eb744dc2a549c56ec218353b
+
+   C:\Users\marka\OneDrive\Escritorio\Nueva carpeta\consumidoresKuick/@markapp__kuick.bak.jks

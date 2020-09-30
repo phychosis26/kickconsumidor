@@ -13,6 +13,8 @@ import _ from "lodash";
 import Loading from "../../components/ui/Loading";
 import firebase from "../../firebase";
 
+
+
 export default function ListaConsumidor() {
   const navigation = useNavigation();
   //loading
@@ -34,6 +36,8 @@ export default function ListaConsumidor() {
           ...doc.data(),
         };
       });
+
+      
       ordenes = _.sortBy(ordenes, "num");
       setData(ordenes);
       setIsVisibleLoading(false);

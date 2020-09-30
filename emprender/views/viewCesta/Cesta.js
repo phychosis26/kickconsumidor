@@ -25,7 +25,7 @@ import { useNavigation } from "@react-navigation/native";
 import * as firebaseAuth from "firebase";
 import * as Permissions from "expo-permissions";
 import * as Location from "expo-location";
-import * as Notifications from 'expo-notifications';
+import * as Notifications from "expo-notifications";
 import MapView from "react-native-maps";
 import MapViewDirections from "react-native-maps-directions";
 import Toast from "react-native-easy-toast";
@@ -48,8 +48,10 @@ Notifications.setNotificationHandler({
 });
 
 export default function Cesta() {
+  // State para permisos ubicacion
+  const [isPermission, setIsPermission] = useState(false);
   //notificaciones
-  const [expoPushToken, setExpoPushToken] = useState('');
+  const [expoPushToken, setExpoPushToken] = useState("");
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef();
   const responseListener = useRef();
@@ -66,7 +68,7 @@ export default function Cesta() {
 
   const [costoTotal, setCostoTotal] = useState(0);
   const [check, setCheck] = useState(true);
-  
+
   const [arrValor, setArrLoc] = useState(false);
 
   //token motorizado
@@ -91,13 +93,19 @@ export default function Cesta() {
   useEffect(() => {
     obtenerFactura(firebaseAuth.auth().currentUser.phoneNumber);
     //notifications
-    registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
-    notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
-      setNotification(notification);
-    });
-    responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-      //console.log(response);
-    });
+    registerForPushNotificationsAsync().then((token) =>
+      setExpoPushToken(token)
+    );
+    notificationListener.current = Notifications.addNotificationReceivedListener(
+      (notification) => {
+        setNotification(notification);
+      }
+    );
+    responseListener.current = Notifications.addNotificationResponseReceivedListener(
+      (response) => {
+        //console.log(response);
+      }
+    );
     //tokens moto
     firebase.db.collection("tokenmoto").onSnapshot(manejarSnapshot);
 
@@ -131,11 +139,11 @@ export default function Cesta() {
     }
   }
 
-
   const calcularTotal = () => {
     let nuevoTotal = 0;
     nuevoTotal = pedido.reduce(
-      (nuevoTotal, articulo) => (parseFloat(nuevoTotal) + parseFloat(articulo.total)).toFixed(2),
+      (nuevoTotal, articulo) =>
+        (parseFloat(nuevoTotal) + parseFloat(articulo.total)).toFixed(2),
       0
     );
 
@@ -151,7 +159,7 @@ export default function Cesta() {
           />
           {!btnSolicitud ? (
             <Button
-            full
+              full
               onPress={() => {
                 setBtnSolicitud(true);
                 setIsVisible(false);
@@ -173,7 +181,8 @@ export default function Cesta() {
   //consulta todos los tokens de motorizados
   const enviarNotificacion = async () => {
     await sendPushNotification(tokenMotorizados);
-    {/*
+    {
+      /*
     const message = {
       to: tokenMotorizados,
       sound: "default",
@@ -193,7 +202,8 @@ export default function Cesta() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(message),
-    });*/}
+    });*/
+    }
   };
   //guardar la solicitud en la bdd
   const enviarDatos = async () => {
@@ -291,10 +301,8 @@ export default function Cesta() {
   var arreglo = [];
   const insctruccionesGG = (inst, i) => {
     pedido[i].instruccion = inst;
-   
   };
 
-    
   return (
     <Container>
       {pedido.length === 0 ? (
@@ -436,7 +444,9 @@ export default function Cesta() {
                 borderRadius: 20,
               }}
             >
-              <Text style={globalStyles.cantidad}>Pedido: $ {parseFloat(total).toFixed(2)}</Text>
+              <Text style={globalStyles.cantidad}>
+                Pedido: $ {parseFloat(total).toFixed(2)}
+              </Text>
               {arrValor ? (
                 <>
                   <Text style={globalStyles.cantidad}>
@@ -452,7 +462,6 @@ export default function Cesta() {
                 <></>
               )}
             </View>
-           
           </Content>
           <ProgressDialog
             visible={loadCosto}
@@ -472,7 +481,7 @@ export default function Cesta() {
                     <Text style={globalStyles.botonTexto}>Cancelar</Text>
                   </Button>
                   <Button
-                  style={{ backgroundColor: "blue" }}
+                    style={{ backgroundColor: "blue" }}
                     disabled={newLocation === null}
                     onPress={() => enviarDatos()}
                   >
@@ -488,7 +497,7 @@ export default function Cesta() {
                     <Text style={globalStyles.botonTexto}>Seguir pidiendo</Text>
                   </Button>
                   <Button
-                  style={{ backgroundColor: "blue" }}
+                    style={{ backgroundColor: "blue" }}
                     onPress={() => {
                       setIsVisibleMap(true);
                     }}
@@ -536,24 +545,26 @@ function Map(props) {
   } = props;
 
   useEffect(() => {
-    (async () => {
-      const resultPermisos = await Permissions.askAsync(Permissions.LOCATION);
-      const statusPermisos = resultPermisos.permissions.location.status;
-      if (statusPermisos !== "granted") {
-        toastRef.current.show(
-          "Tienes que aceptar los permisos de localizacion para ordenar un pedido",
-          3000
-        );
-      } else {
-        const loc = await Location.getCurrentPositionAsync({});
-        setLocation({
-          latitude: loc.coords.latitude,
-          longitude: loc.coords.longitude,
-          latitudeDelta: 0.001,
-          longitudeDelta: 0.001,
-        });
-      }
-    })();
+      (async () => {
+        const resultPermisos = await Permissions.askAsync(Permissions.LOCATION);
+        const statusPermisos = resultPermisos.permissions.location.status;
+        if (statusPermisos !== "granted") {
+          toastRef.current.show(
+            "Tienes que aceptar los permisos de localizacion EN TODO MOMENTO para ordenar tu pedido y poder brindarte el mejor servicio",
+            5000
+          );
+          //setTimeout(()=>{},5000);
+        } else {
+          const loc = await Location.getCurrentPositionAsync({});
+          setLocation({
+            latitude: loc.coords.latitude,
+            longitude: loc.coords.longitude,
+            latitudeDelta: 0.001,
+            longitudeDelta: 0.001,
+          });
+        }
+      })();
+    
   }, []);
 
   const confirmLocation = () => {
@@ -614,7 +625,6 @@ function Map(props) {
   );
 }
 
-
 async function sendPushNotification(tokenMotorizados) {
   const message = {
     to: tokenMotorizados,
@@ -626,7 +636,7 @@ async function sendPushNotification(tokenMotorizados) {
       channelId: "chat-messages", //and this
     },
   };
-  
+
   await fetch("https://exp.host/--/api/v2/push/send", {
     method: "POST",
     headers: {
@@ -636,31 +646,30 @@ async function sendPushNotification(tokenMotorizados) {
     },
     body: JSON.stringify(message),
   });
-
-
 }
 
 async function registerForPushNotificationsAsync() {
   let token;
-    const { status: existingStatus } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
-    let finalStatus = existingStatus;
-    if (existingStatus !== 'granted') {
-      const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
-      finalStatus = status;
-    }
-    if (finalStatus !== 'granted') {
-      alert('Failed to get push token for push notification!');
-      return;
-    }
-    token = (await Notifications.getExpoPushTokenAsync()).data;
- 
+  const { status: existingStatus } = await Permissions.getAsync(
+    Permissions.NOTIFICATIONS
+  );
+  let finalStatus = existingStatus;
+  if (existingStatus !== "granted") {
+    const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+    finalStatus = status;
+  }
+  if (finalStatus !== "granted") {
+    alert("Failed to get push token for push notification!");
+    return;
+  }
+  token = (await Notifications.getExpoPushTokenAsync()).data;
 
-  if (Platform.OS === 'android') {
-    Notifications.setNotificationChannelAsync('chat-messages', {
-      name: 'chat-messages',
+  if (Platform.OS === "android") {
+    Notifications.setNotificationChannelAsync("chat-messages", {
+      name: "chat-messages",
       importance: Notifications.AndroidImportance.MAX,
       vibrationPattern: [0, 250, 250, 250],
-      lightColor: '#FF231F7C',
+      lightColor: "#FF231F7C",
     });
   }
 
